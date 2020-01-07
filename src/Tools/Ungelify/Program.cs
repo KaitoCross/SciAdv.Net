@@ -269,9 +269,24 @@ namespace Ungelify
 
         private void ExtractAll()
         {
+            String path = Path.Combine(_currentOutputDir, "id-to-filename.txt");
+            if (!File.Exists(path)) 
+            {
+                // Create a file to write to.
+                // File stores the internal ID's of each file in the archive
+                using (StreamWriter sw = File.CreateText(path)) 
+                {
+                    sw.WriteLine("Filename;ID");
+                }
+            }
             foreach (var entry in _currentArchive.Entries)
             {
                 ExtractFile(entry);
+                //write the extracted file's name and ID into the CSV created above
+                using (StreamWriter sw = File.AppendText(path)) 
+                {
+                    sw.WriteLine(entry.Name + ";" + entry.Id.ToString());
+                }
             }
         }
 
